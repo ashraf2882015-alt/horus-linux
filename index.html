@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  HorusOS — Landing Page (ملف واحد شامل)
+  ------------------------------------------------------------
+  ✏️ لتغيير رابط التحميل: عدّل في DOWNLOAD_URL في <script>
+  ✏️ لتغيير اسم الملف: عدّل في FILENAME في <script>
+  ✏️ لتغيير الألوان: عدّل المتغيرات في :root داخل <style>
+  ============================================================
+-->
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="HorusOS — توزيعة لينكس حديثة، آمنة، ومبنية للسرعة." />
+  <meta name="theme-color" content="#0a0e1a" />
+  <title>HorusOS — توزيعة لينكس حديثة</title>
+
+  <!-- خطوط Google: Cairo للعربي + Inter للإنجليزي + JetBrains Mono للأكواد -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       1) المتغيرات الأساسية — غيّر الألوان من هنا
+       ============================================================ */
+    :root {
+      --bg:        #0a0e1a;            /* خلفية أساسية (كحلي غامق) */
+      --bg-2:      #11151f;            /* خلفية البطاقات */
+      --bg-3:      #161b2a;            /* خلفية ثانوية */
+      --accent:    #4a8cff;            /* الأزرق الملكي الأساسي */
+      --accent-2:  #6ba3ff;            /* أزرق فاتح للهوفر */
+      --accent-soft: rgba(74, 140, 255, 0.12);
+      --accent-glow: rgba(74, 140, 255, 0.4);
+      --text:      #e8ecf2;            /* النص الأساسي */
+      --text-2:    #8b94a8;            /* النص الثانوي */
+      --muted:     #5a6275;            /* نص مكتوم */
+      --success:   #4ade80;            /* لون مؤشر الحالة */
+      --border:    rgba(255, 255, 255, 0.06);
+      --border-strong: rgba(255, 255, 255, 0.12);
+      --radius:    12px;
+      --radius-lg: 20px;
+    }
+
+    /* ============================================================
+       2) إعادة ضبط عامة
+       ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Cairo', 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      /* خلفية متدرجة خفيفة لإحساس الفخامة */
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(74, 140, 255, 0.10), transparent),
+        radial-gradient(ellipse 60% 40% at 50% 100%, rgba(74, 140, 255, 0.05), transparent);
+      background-attachment: fixed;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ============================================================
+       3) الهيدر — بسيط جداً
+       ============================================================ */
+    .site-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 18px 0;
+      transition: all 0.3s ease;
+    }
+    .site-header.scrolled {
+      background: rgba(10, 14, 26, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 0;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 18px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 0.5px;
+    }
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+      color: var(--accent);
+      filter: drop-shadow(0 0 10px var(--accent-glow));
+    }
+
+    .header-meta { display: flex; align-items: center; gap: 12px; }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 12px;
+      background: rgba(74, 222, 128, 0.08);
+      border: 1px solid rgba(74, 222, 128, 0.2);
+      border-radius: 100px;
+      font-size: 12px;
+      color: var(--success);
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+    }
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--success);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--success);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: 0.5; transform: scale(0.85); }
+    }
+
+    /* ============================================================
+       4) قسم الهيرو — قلب الصفحة
+       ============================================================ */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 140px 0 80px;
+      position: relative;
+    }
+
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero-logo {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 28px;
+      color: var(--accent);
+      filter: drop-shadow(0 0 24px var(--accent-glow));
+      animation: floatLogo 4s ease-in-out infinite;
+    }
+    @keyframes floatLogo {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-6px); }
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: var(--accent-soft);
+      border: 1px solid var(--border-strong);
+      border-radius: 100px;
+      font-size: 12px;
+      color: var(--accent-2);
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.5px;
+      margin-bottom: 28px;
+    }
+    .eyebrow .v {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .hero-title {
+      font-size: clamp(3.5rem, 12vw, 8rem);
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -3px;
+      margin-bottom: 18px;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(180deg, #ffffff 0%, #8b94a8 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--text-2);
+      max-width: 540px;
+      margin: 0 auto 40px;
+      font-weight: 400;
+    }
+
+    /* ============================================================
+       5) الأزرار — مع Hover effects مودرن
+       ============================================================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 32px;
+      border-radius: var(--radius);
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .btn-lg {
+      padding: 18px 36px;
+      font-size: 17px;
+    }
+
+    /* الزرار الأساسي — أزرق ملكي مع توهج ولمعة متحركة */
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+      box-shadow: 0 8px 30px var(--accent-glow);
+    }
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 50px var(--accent-glow);
+      background: var(--accent-2);
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.25) 50%,
+        transparent 100%
+      );
+      transform: translateX(-100%);
+      transition: transform 0.7s ease;
+    }
+    .btn-primary:hover::before {
+      transform: translateX(100%);
+    }
+
+    /* الزرار الثانوي — حدود شفافة تتلون عند الهوفر */
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border-strong);
+    }
+    .btn-secondary:hover {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent-2);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(74, 140, 255, 0.15);
+    }
+
+    .btn-icon {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .btn .arrow {
+      display: inline-block;
+      transition: transform 0.3s ease;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn:hover .arrow {
+      transform: translateX(-5px);
+    }
+
+    /* ============================================================
+       6) ملاحظة اسم الملف — أنيقة ومونو
+       ============================================================ */
+    .file-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 24px;
+      padding: 10px 18px;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 13px;
+      color: var(--text-2);
+      font-family: 'JetBrains Mono', monospace;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 100%;
+    }
+    .file-note code {
+      color: var(--accent-2);
+      font-weight: 600;
+      font-size: 13px;
+      padding: 2px 8px;
+      background: var(--accent-soft);
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      direction: ltr;
+    }
+    .file-note .sep {
+      color: var(--muted);
+    }
+
+    /* ============================================================
+       7) قسم المميزات — Minimalist cards
+       ============================================================ */
+    .section {
+      padding: 80px 0;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .feature {
+      padding: 28px;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: all 0.3s ease;
+    }
+    .feature:hover {
+      border-color: var(--border-strong);
+      background: var(--bg-3);
+      transform: translateY(-4px);
+    }
+    .feature-icon {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      background: var(--accent-soft);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--accent);
+      margin-bottom: 18px;
+    }
+    .feature h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .feature p {
+      color: var(--text-2);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* ============================================================
+       8) قسم الـ CTA — الزرار الثانوي للتحميل
+       ============================================================ */
+    .cta-section {
+      padding: 80px 0 100px;
+    }
+
+    .cta-box {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 60px 40px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(74, 140, 255, 0.1), transparent 60%),
+        var(--bg-2);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+    }
+    .cta-box h2 {
+      font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+      font-weight: 800;
+      margin-bottom: 10px;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: -0.5px;
+    }
+    .cta-box p {
+      color: var(--text-2);
+      margin-bottom: 30px;
+      font-size: 15px;
+    }
+
+    /* ============================================================
+       9) الفوتر
+       ============================================================ */
+    .site-footer {
+      padding: 30px 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-2);
+    }
+    .site-footer .brand {
+      color: var(--text);
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* ============================================================
+       10) أنيميشن الـ Fade Up
+       ============================================================ */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.8s ease forwards;
+    }
+    .fade-up.d1 { animation-delay: 0.1s; }
+    .fade-up.d2 { animation-delay: 0.2s; }
+    .fade-up.d3 { animation-delay: 0.3s; }
+    .fade-up.d4 { animation-delay: 0.4s; }
+    .fade-up.d5 { animation-delay: 0.5s; }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal-target {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal-target.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ============================================================
+       11) التجاوب (Responsive)
+       ============================================================ */
+    @media (max-width: 720px) {
+      .container { padding: 0 20px; }
+      .hero { padding: 120px 0 60px; }
+      .section { padding: 60px 0; }
+      .cta-section { padding: 60px 0 80px; }
+      .cta-box { padding: 40px 24px; }
+
+      .file-note {
+        font-size: 12px;
+        padding: 8px 14px;
+        border-radius: 14px;
+        gap: 6px;
+      }
+      .file-note code { font-size: 12px; padding: 2px 6px; }
+
+      .btn { padding: 14px 24px; font-size: 15px; }
+      .btn-lg { padding: 16px 28px; font-size: 16px; }
+
+      .hero-logo { width: 64px; height: 64px; }
+
+      /* إخفاء نص الحالة في الموبايل — نسيب النقطة بس */
+      .status-pill span:not(.status-dot) { display: none; }
+      .status-pill { padding: 6px 8px; }
+    }
+
+    @media (max-width: 400px) {
+      .hero-title { letter-spacing: -1.5px; }
+      .file-note { font-size: 11px; }
+    }
+
+    /* ============================================================
+       12) تفضيل المستخدم وتقنيات الوصول
+       ============================================================ */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================ -->
+  <!-- 🔝 الهيدر                                                     -->
+  <!-- ============================================================ -->
+  <header class="site-header" id="siteHeader">
+    <div class="container header-inner">
+      <a href="#top" class="logo" aria-label="HorusOS">
+        <!-- لوجو عين حورس (SVG) -->
+        <svg class="logo-mark" viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M5 30 Q 25 8 50 8 Q 75 8 95 30 Q 75 52 50 52 Q 25 52 5 30 Z" stroke="currentColor" stroke-width="2.5"/>
+          <circle cx="50" cy="30" r="7" fill="currentColor"/>
+          <path d="M22 14 Q 50 4 78 14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M50 50 L 50 58" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+        <span>HorusOS</span>
+      </a>
+
+      <div class="header-meta">
+        <span class="status-pill" title="الإصدار الحالي">
+          <span class="status-dot"></span>
+          <span>v1.0 · Falcon</span>
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================================ -->
+  <!-- 🏛️ قسم الهيرو — الزرار الأساسي للتحميل                      -->
+  <!-- ============================================================ -->
+  <section class="hero" id="top">
+    <div class="container">
+      <div class="hero-content">
+
+        <!-- لوجو عين حورس كبير في الهيرو -->
+        <div class="hero-logo fade-up">
+          <svg viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M5 30 Q 25 8 50 8 Q 75 8 95 30 Q 75 52 50 52 Q 25 52 5 30 Z" stroke="currentColor" stroke-width="2"/>
+            <circle cx="50" cy="30" r="9" fill="currentColor"/>
+            <circle cx="50" cy="30" r="3.5" fill="#0a0e1a"/>
+            <path d="M20 12 Q 50 2 80 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M50 50 L 50 58" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <span class="eyebrow fade-up d1">
+          <span>●</span>
+          <span>الإصدار <span class="v">v1.0 — Falcon</span></span>
+        </span>
+
+        <h1 class="hero-title fade-up d2">HorusOS</h1>
+
+        <p class="hero-subtitle fade-up d3">
+          توزيعة لينكس حديثة، آمنة، ومبنية للسرعة والثبات.
+          <br/>رؤية جديدة لتجربة سطح المكتب.
+        </p>
+
+        <!-- ⬇ الزرار الأساسي للتحميل -->
+        <div class="fade-up d4">
+          <a href="HorusOS.zip" class="btn btn-primary btn-lg" id="primaryDownload" download>
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span>تحميل HorusOS.zip</span>
+            <span class="arrow">←</span>
+          </a>
+        </div>
+
+        <!-- 📦 ملاحظة اسم الملف -->
+        <div class="fade-up d5">
+          <div class="file-note">
+            <span>📦</span>
+            <span>الملف المضغوط:</span>
+            <code>HorusOS.zip</code>
+            <span class="sep">·</span>
+            <span>يحتوي على:</span>
+            <code>HorusOS.iso</code>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- ⚡ المميزات — Minimal cards                                    -->
+  <!-- ============================================================ -->
+  <section class="section">
+    <div class="container">
+      <div class="features-grid">
+
+        <article class="feature reveal-target">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+          </div>
+          <h3>سريعة جداً</h3>
+          <p>بوت في ثوانٍ، واستهلاك خفيف للذاكرة حتى على الأجهزة القديمة.</p>
+        </article>
+
+        <article class="feature reveal-target">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+          </div>
+          <h3>آمنة</h3>
+          <p>تحديثات أمنية منتظمة، وتشفير افتراضي، وبنية معزولة.</p>
+        </article>
+
+        <article class="feature reveal-target">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="16 18 22 12 16 6"/>
+              <polyline points="8 6 2 12 8 18"/>
+            </svg>
+          </div>
+          <h3>مفتوحة المصدر</h3>
+          <p>شفافة تماماً، يمكن لأي شخص مراجعتها أو المساهمة في تطويرها.</p>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- ⬇ قسم الـ CTA — الزرار الثانوي للتحميل                      -->
+  <!-- ============================================================ -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-box reveal-target">
+        <h2>جاهز تبدأ؟</h2>
+        <p>حمّل أحدث إصدار وابدأ خلال دقائق — مجاناً ومفتوح المصدر.</p>
+
+        <!-- ⬇ الزرار الثانوي للتحميل -->
+        <a href="HorusOS.zip" class="btn btn-secondary btn-lg" id="secondaryDownload" download>
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          <span>تحميل HorusOS.zip</span>
+        </a>
+
+        <!-- 📦 ملاحظة اسم الملف (مكررة) -->
+        <div class="file-note">
+          <span>📦</span>
+          <span>الملف:</span>
+          <code>HorusOS.zip</code>
+          <span class="sep">·</span>
+          <span>يحتوي على:</span>
+          <code>HorusOS.iso</code>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- 📝 الفوتر                                                     -->
+  <!-- ============================================================ -->
+  <footer class="site-footer">
+    <div class="container">
+      <p><span class="brand">HorusOS</span> · مبنية بحب لمجتمع لينكس · © 2026</p>
+    </div>
+  </footer>
+
+  <!-- ============================================================ -->
+  <!-- ⚙️ الجافاسكريبت                                                -->
+  <!-- ============================================================ -->
+  <script>
+    // ============================================================
+    // ⚙️ الإعدادات — غيّرها حسب ملفاتك
+    // ============================================================
+    const DOWNLOAD_URL  = "HorusOS.zip";   // اسم ملف التحميل
+    const FILENAME_ZIP  = "HorusOS.zip";   // اسم الـ ZIP
+    const FILENAME_ISO  = "HorusOS.iso";   // اسم الـ ISO داخل الـ ZIP
+
+    // ============================================================
+    // 1) تأثير الهيدر عند السكرول
+    // ============================================================
+    const header = document.getElementById('siteHeader');
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', window.scrollY > 30);
+    }, { passive: true });
+
+    // ============================================================
+    // 2) دالة التحميل — لما المستخدم يضغط على أي زرار
+    // ============================================================
+    function handleDownload(event) {
+      const btn = event.currentTarget;
+
+      // إنشاء رابط تحميل برمجياً (بيشتغل حتى لو الملف على نفس المجلد)
+      const a = document.createElement('a');
+      a.href = DOWNLOAD_URL;
+      a.download = FILENAME_ZIP;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      // تغيير حالة الزرار مؤقتاً — تجربة مرئية لطيفة
+      const label = btn.querySelector('span:not(.arrow):not(.btn-icon-span)');
+      // الطريقة الأسهل: نخزن النص الأصلي ونستبدله
+      const originalHTML = btn.innerHTML;
+      const iconHTML = btn.querySelector('svg')?.outerHTML || '';
+      btn.innerHTML = iconHTML + '<span>بدأ التحميل...</span>';
+
+      // استرجاع الزرار بعد ثانيتين
+      setTimeout(() => {
+        btn.innerHTML = originalHTML;
+      }, 1800);
+    }
+
+    // ربط الزرارين
+    document.getElementById('primaryDownload').addEventListener('click', handleDownload);
+    document.getElementById('secondaryDownload').addEventListener('click', handleDownload);
+
+    // ============================================================
+    // 3) Reveal على السكرول — لإظهار العناصر بشكل سلس
+    // ============================================================
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal-target').forEach((el) => {
+      revealObserver.observe(el);
+    });
+  </script>
+</body>
+</html>
